@@ -1,0 +1,25 @@
+projection;
+//use draft;
+
+define behavior for ZC_SALES_ORDER_RAP alias SalesOrder
+use etag
+{
+  use create;
+  use update;
+  use delete;
+
+  use association _SalesOrderItem
+  { create; }//with draft; }
+
+    use action setProcessed;
+  }
+
+  define behavior for ZC_SO_ITEM_RAP alias SalesOrderItem
+  {
+
+    use update;
+    use delete;
+
+    use association _SalesOrderHeader
+    { }//with draft; }
+    }

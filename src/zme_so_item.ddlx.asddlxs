@@ -1,0 +1,72 @@
+@Metadata.layer: #CORE
+@UI:{
+    headerInfo:{
+        typeName: 'Sales Order Item Detail',
+        typeNamePlural: 'Items',
+        title:{
+            type: #STANDARD,
+            value: 'ItemNo'
+        },
+        description: {
+            type: #STANDARD,
+            value: 'MaterialDescription'
+        }
+    },
+    presentationVariant: [{
+        sortOrder: [{
+            by: 'LastChangedAt',
+            direction: #DESC }]
+    }]
+}
+annotate entity ZC_SO_ITEM_RAP with
+{
+  @UI:{
+      facet: [{
+          id: 'General',
+          purpose: #STANDARD,
+          label: 'General Item Details',
+          type:#IDENTIFICATION_REFERENCE,
+          targetQualifier: 'General'
+      }]
+   }
+  @UI:{ lineItem: [{ position: 10, label: 'Item no' }],
+        identification: [{ position: 10, label: 'Item Number', qualifier: 'General' }]
+  }
+  ItemNo;
+
+  @UI: { lineItem: [{ position: 20, label: 'Material' }],
+         identification: [{ position: 20, label: 'Material No', qualifier: 'General' }]
+  }
+  Material;
+
+  @UI:{ lineItem: [{ position: 25, label: 'Description' }],
+        identification: [{ position: 30, label: 'Description', qualifier: 'General' }]
+  }
+  MaterialDescription;
+
+
+  @UI: { lineItem: [{ position: 30, label: 'Item Category' }],
+  identification: [{ position: 40, label: 'Item Category', qualifier: 'General' }]
+  }
+  ItemCategory;
+
+  @UI: { lineItem: [{ position: 40, label: 'Plant' }],
+  identification: [{ position: 50, label: 'Plant', qualifier: 'General' }]
+  }
+  Plant;
+
+  @UI: { lineItem: [{ position: 50, label: 'Quantity' }],
+         identification: [{ position: 35, label: 'Quantity', qualifier: 'General' }] }
+  TargetQuantity;
+  
+  @UI:{ lineItem: [{ position: 60, label: 'Net Amount' }],
+        identification: [{ qualifier: 'General', position: 40, label: 'Net Amount(Item)' }] }
+  ItemAmount;
+
+  @UI.hidden: true
+  LastChangedBy;
+
+  @UI.hidden: true
+  LastChangedAt;
+
+}
