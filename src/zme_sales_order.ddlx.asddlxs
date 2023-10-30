@@ -1,0 +1,141 @@
+@Metadata.layer: #CORE
+
+@UI: {
+    headerInfo: {
+        typeName: 'Sales Order',
+        typeNamePlural: 'Sales Orders',
+        title: {
+            type: #STANDARD,
+            value: 'SalesOrder'
+        },
+        description: {
+            type: #STANDARD,
+            value: 'DocumentTypeText'
+        }
+    },
+    presentationVariant: [{
+        sortOrder: [{
+            by: 'CreationDate',
+            direction:#DESC
+        }]
+    }]
+}
+annotate entity ZC_SALES_ORDER_RAP with
+{
+
+  @UI.facet: [{ id: 'HeaderPrice',
+                purpose: #HEADER,
+                type: #DATAPOINT_REFERENCE,
+                position: 10,
+                targetQualifier: 'Price' },
+
+              { id: 'HeaderStatus',
+                purpose: #HEADER,
+                type: #DATAPOINT_REFERENCE,
+                position: 20,
+                targetQualifier: 'Status' },
+
+              { id: 'HeaderDetailsTab',
+                purpose: #STANDARD,
+                type: #COLLECTION,
+                label: 'Header Details',
+                position: 10 },
+
+              { id: 'GeneralInfo',
+                purpose: #STANDARD,
+                type: #IDENTIFICATION_REFERENCE,
+                parentId: 'HeaderDetailsTab',
+                label: 'General Information',
+                position: 10,
+                targetQualifier: 'GenInfo' },
+
+              { id: 'Dates',
+                purpose: #STANDARD,
+                type: #FIELDGROUP_REFERENCE,
+                parentId: 'HeaderDetailsTab',
+                label: 'Dates',
+                position: 20,
+                targetQualifier: 'DatesGroup' },
+
+              { id: 'TotalPrice',
+                purpose: #STANDARD,
+                type: #FIELDGROUP_REFERENCE,
+                parentId: 'HeaderDetailsTab',
+                label: 'Total Price',
+                position: 30,
+                targetQualifier: 'TotalPrice' },
+
+              { id: 'Status',
+                purpose: #STANDARD,
+                type:#IDENTIFICATION_REFERENCE,
+                label: 'Status',
+                targetQualifier: 'Statuses',
+                position: 20 },
+
+              { id: 'Items',
+                purpose: #STANDARD,
+                type:#LINEITEM_REFERENCE,
+                label: 'Items',
+                targetElement: '_SalesOrderItem',
+                position: 30 }
+  ]
+  @UI: { lineItem: [{ position: 10, label: 'Sales Order No' }],
+         identification: [{ position: 10, label: 'Sales Order No', qualifier: 'GenInfo' }],
+         selectionField: [{ position: 10 }]
+  }
+  SalesOrder;
+
+  @UI:{ lineItem: [{ position: 20, label: 'Document Type' }],
+        identification: [{ position: 20, label: 'Document Type', qualifier: 'GenInfo' }],
+        selectionField: [{ position: 20 }]
+  }
+  @UI.textArrangement: #TEXT_LAST
+  DocumentType;
+
+
+  @UI: { lineItem: [{ position: 30, label: 'Creation Date' }],
+         fieldGroup: [{ qualifier: 'DatesGroup', position: 10 }]
+  }
+  CreationDate;
+
+  @UI:{ lineItem: [{ position: 40, label: 'Creation Time' }],
+        fieldGroup: [{ qualifier: 'DatesGroup', position: 20 }]
+  }
+  CreationTime;
+
+  @UI:{ lineItem: [{ position: 50, label: 'Created By' }],
+        identification: [{ position: 30, label: 'Created By', qualifier: 'GenInfo' }]
+  }
+  CreatedBy;
+
+  @UI:{ lineItem: [{ position: 60, label: 'Document Category' }],
+        identification: [{ position: 40, label: 'Document Category', qualifier: 'GenInfo' }]
+  }
+  DocumentCategory;
+
+  @UI:{ lineItem: [{  position: 70 }],
+        dataPoint:{ qualifier: 'Price', title: 'Total Price' },
+        fieldGroup: [{ qualifier: 'TotalPrice', position: 10 }]
+  }
+  NetPrice;
+
+  @UI:{ textArrangement: #TEXT_ONLY,
+        lineItem: [{ position: 80, label: 'Status', criticality: 'OverallStatusCriticality'},
+                   { type: #FOR_ACTION, dataAction: 'setProcessed', label: 'Set Processed' }],
+
+        dataPoint:{ qualifier: 'Status', title: 'Status', criticality: 'OverallStatusCriticality' },
+        identification: [{ position: 10, label: 'Status Information', qualifier: 'Statuses', criticality: 'OverallStatusCriticality' },
+                         { type: #FOR_ACTION, dataAction: 'setProcessed', label: 'Set Processed' }]
+  }
+  OverallStatus;
+
+  @UI.hidden: true
+  LastChangedBy;
+  @UI:{ identification: [{ position: 25, label: 'Language', qualifier: 'GenInfo' }] }
+  language;
+
+  @UI.hidden: true
+  @UI.fieldGroup: [{ qualifier: 'DatesGroup', position: 30 }]
+  LastChangedAt;
+
+}

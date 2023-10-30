@@ -1,0 +1,80 @@
+managed implementation in class zbp_i_sales_order_rap unique;
+with draft;
+
+define behavior for ZI_SALES_ORDER_RAP alias SalesOrder
+persistent table zsales_order_rap
+draft table zsales_hd_draft
+lock master
+total etag LastChangedAt
+etag master LastChangedAt
+//authorization master ( instance )
+{
+  create ( precheck ); //Uniqueness check for sales order
+  update;
+  delete;
+  association _SalesOrderItem { create; with draft; }
+
+  field ( readonly ) CreationDate, CreatedBy, NetPrice, Currency;
+  field ( features : instance ) DocumentCategory;
+  field ( mandatory : create, readonly : update ) SalesOrder;
+
+  action ( features : instance ) setProcessed result [1] $self;
+
+  internal action setTotalPrice_action result [1] $self;
+
+  validation validateSalesOrder on save { field DocumentType, SalesOrder; create; }
+
+  determination setCreatedDate_By on modify { create; }
+
+
+  mapping for zsales_order_rap
+    {
+      SalesOrder       = vbeln;
+      CreationDate     = erdat;
+      CreationTime     = erzet;
+      CreatedBy        = ernam;
+      DocumentCategory = vbtyp;
+      TransactionGroup = trvog;
+      DocumentType     = auart;
+      NetPrice         = netwr;
+      Currency         = waerk;
+      OverallStatus    = uvall;
+      LastChangedBy    = last_changed_by;
+      LastChangedAt    = last_changed_at;
+    }
+}
+
+define behavior for ZI_SO_ITEM_RAP alias SalesOrderItem
+persistent table zso_item_rap
+draft table zso_item_draft
+lock dependent by _SalesOrderHeader
+//authorization dependent by _SalesOrderHeader
+{
+
+  update;
+  delete;
+
+  field ( readonly ) SalesOrder;
+  field ( mandatory : create, readonly : update ) ItemNo;
+
+  association _SalesOrderHeader { with draft; }
+
+  determination setTotalPrice on modify { field ItemAmount, TargetQuantity; }
+
+  mapping for zso_item_rap
+    {
+      SalesOrder          = vbeln;
+      ItemNo              = posnr;
+      Material            = matnr;
+      MaterialDescription = matext;
+      MaterialEntered     = matwa;
+      ItemCategory        = pstyv;
+      Plant               = werks;
+      TargetQuantity      = zmeng;
+      UnitOfMeasurement   = zieme;
+      ItemAmount          = netwr;
+      Currency            = waerk;
+      LastChangedBy       = last_changed_by;
+      LastChangedAt       = last_changed_at;
+    }
+}
