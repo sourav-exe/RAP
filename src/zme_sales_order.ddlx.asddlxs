@@ -121,7 +121,7 @@ annotate entity ZC_SALES_ORDER_RAP with
 
   @UI:{ textArrangement: #TEXT_ONLY,
         lineItem: [{ position: 80, label: 'Status', criticality: 'OverallStatusCriticality'},
-                   { type: #FOR_ACTION, dataAction: 'setProcessed', label: 'Set Processed' }],
+                   { type: #FOR_ACTION, dataAction: 'setProcessed', label: 'Set Processed', invocationGrouping: #CHANGE_SET }],
 
         dataPoint:{ qualifier: 'Status', title: 'Status', criticality: 'OverallStatusCriticality' },
         identification: [{ position: 10, label: 'Status Information', qualifier: 'Statuses', criticality: 'OverallStatusCriticality' },

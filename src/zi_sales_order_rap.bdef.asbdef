@@ -7,7 +7,7 @@ draft table zsales_hd_draft
 lock master
 total etag LastChangedAt
 etag master LastChangedAt
-//authorization master ( instance )
+authorization master ( global, instance )
 {
   create ( precheck ); //Uniqueness check for sales order
   update;
@@ -18,7 +18,7 @@ etag master LastChangedAt
   field ( features : instance ) DocumentCategory;
   field ( mandatory : create, readonly : update ) SalesOrder;
 
-  action ( features : instance ) setProcessed result [1] $self;
+  action ( features : instance  ) setProcessed result [1] $self;
 
   internal action setTotalPrice_action result [1] $self;
 
@@ -48,7 +48,7 @@ define behavior for ZI_SO_ITEM_RAP alias SalesOrderItem
 persistent table zso_item_rap
 draft table zso_item_draft
 lock dependent by _SalesOrderHeader
-//authorization dependent by _SalesOrderHeader
+authorization dependent by _SalesOrderHeader
 {
 
   update;

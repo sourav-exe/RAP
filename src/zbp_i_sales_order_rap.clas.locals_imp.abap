@@ -28,11 +28,40 @@ CLASS lhc_salesorder DEFINITION INHERITING FROM cl_abap_behavior_handler.
     METHODS precheck_create FOR PRECHECK
       IMPORTING entities FOR CREATE salesorder.
 
+    METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
+      IMPORTING REQUEST requested_authorizations FOR salesorder RESULT result.
+
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR salesorder RESULT result.
+
 ENDCLASS.
 
 CLASS lhc_salesorder IMPLEMENTATION.
 
   METHOD setprocessed.
+
+
+    LOOP AT keys ASSIGNING FIELD-SYMBOL(<nfs_key>).
+
+"1. Using UI.lineitem.invocationGrouping: #change_set-> a single call to the action will be made with all selected line items
+"   If there is any validation failures, and failed and reported structures are filled then none of the records are updated.
+"   If we don't fill the failed and reported structures then the successful instances will be updated.
+
+
+      IF <nfs_key>-SalesOrder >= 700.
+
+*        APPEND VALUE #( %tky = <nfs_key>-%tky ) TO failed-salesorder.
+*        APPEND VALUE #( %tky = <nfs_key>-%tky
+*                        %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
+*                                                      text = 'Failed to Set Status') ) TO reported-salesorder.
+      ELSE.
+        MODIFY ENTITIES OF zi_sales_order_rap IN LOCAL MODE
+            ENTITY SalesOrder
+            UPDATE FIELDS ( OverallStatus ) WITH VALUE #( ( %tky = <nfs_key>-%tky
+                                                            OverallStatus = 'C' ) ).
+      ENDIF.
+    ENDLOOP.
+
 
     MODIFY ENTITIES OF zi_sales_order_rap IN LOCAL MODE
     ENTITY salesorder
@@ -48,6 +77,7 @@ CLASS lhc_salesorder IMPLEMENTATION.
             RESULT DATA(nt_sales_order).
 
     result = VALUE #( FOR ls_sales_order IN nt_sales_order ( %tky = ls_sales_order-%tky
+
                                                              %param = CORRESPONDING #(  ls_sales_order ) ) ).
   ENDMETHOD.
 
@@ -241,21 +271,53 @@ CLASS lhc_salesorder IMPLEMENTATION.
 
   ENDMETHOD.
 
-*  METHOD get_global_authorizations.
-*
-*    IF requested_authorizations-%update = if_abap_behv=>mk-on OR
-*       requested_authorizations-%action-edit = if_abap_behv=>mk-on.
-*
-*      "Check if authorized
-*      IF 1 = 2.
-*      ELSE.
-*        result-%update = if_abap_behv=>auth-unauthorized.
-*        result-%action-edit = if_abap_behv=>auth-unauthorized.
-*      ENDIF.
-*
-*    ENDIF.
-*  ENDMETHOD.
+  METHOD get_global_authorizations.
+
+    "setting the result as unauthorized will make the buttons disappear.
+
+    IF requested_authorizations-%update = if_abap_behv=>mk-on OR
+       requested_authorizations-%action-edit = if_abap_behv=>mk-on.
 
 
+      "Check if authorized
+      IF 1 = 1.
+      ELSE.
+        result-%update = if_abap_behv=>auth-unauthorized.
+        result-%action-edit = if_abap_behv=>auth-unauthorized.
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD get_instance_authorizations.
+    "1. if we use the BO addition authorization:update, then %action-setProcesses will not be present in requested and result parameter
+    " The button will be visible
+    "with this we can check authorization at the time of pressing the action button( %update will be set ) and then show authorization error
+
+    "2. In case we want to make the button disappear w.r.t entity instance then simply adding authorization master( instance ) in the entity def is enough
+    "and then making the result-%action-setProcessed to unauthorized value.
+
+    READ ENTITIES OF zi_sales_order_rap IN LOCAL MODE
+      ENTITY SalesOrder ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(nt_sales_order).
+
+    LOOP AT nt_sales_order ASSIGNING FIELD-SYMBOL(<nfs_sales_order>).
+      IF requested_authorizations-%action-setProcessed = if_abap_behv=>mk-on AND
+         <nfs_sales_order>-OverallStatus = 'A' AND
+         <nfs_sales_order>-SalesOrder = '500'.
+
+        APPEND VALUE #(  %tky = <nfs_sales_order>-%tky
+                         %action-setprocessed = if_abap_behv=>auth-unauthorized ) TO result.
+
+        "Displaying error will only be relevant for point 1.
+*        APPEND VALUE #( %tky = <nfs_sales_order>-%tky ) TO failed-salesorder.
+*
+*        APPEND VALUE #(  %tky = <nfs_sales_order>-%tky
+**                         %state_area = 'PreCheck'
+*                         %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
+*                                                       text = 'No Authorization to process Status' ) ) TO reported-salesorder.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
 
 ENDCLASS.
