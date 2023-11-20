@@ -22,18 +22,32 @@ annotate entity ZC_SO_ITEM_RAP with
 {
   @UI:{
       facet: [{
-          id: 'General',
-          purpose: #STANDARD,
-          label: 'General Item Details',
-          type:#IDENTIFICATION_REFERENCE,
-          targetQualifier: 'General'
-      }]
-   }
+                 id: 'General',
+                 purpose: #STANDARD,
+                 label: 'General Item Details',
+                 position: 10,
+                 type:#IDENTIFICATION_REFERENCE,
+                 targetQualifier: 'General' },
+
+              {
+                 id: 'Attach',
+                 purpose: #STANDARD,
+                 label: 'File Attachment',
+                 position: 20,
+                 type: #IDENTIFICATION_REFERENCE,
+                 targetQualifier: 'Attach' }
+  ]}
+  @UI:{ lineItem: [{ position: 5, label: 'Sales Order No.' }],
+        identification: [{ position: 5, label: 'Sales Order No.', qualifier: 'General' }]
+  }
+  SalesOrder;
+
   @UI:{ lineItem: [{ position: 10, label: 'Item no' }],
         identification: [{ position: 10, label: 'Item Number', qualifier: 'General' }]
   }
   ItemNo;
 
+  @UI.textArrangement: #TEXT_LAST
   @UI: { lineItem: [{ position: 20, label: 'Material' }],
          identification: [{ position: 20, label: 'Material No', qualifier: 'General' }]
   }
@@ -58,10 +72,20 @@ annotate entity ZC_SO_ITEM_RAP with
   @UI: { lineItem: [{ position: 50, label: 'Quantity' }],
          identification: [{ position: 35, label: 'Quantity', qualifier: 'General' }] }
   TargetQuantity;
-  
+
   @UI:{ lineItem: [{ position: 60, label: 'Net Amount' }],
         identification: [{ qualifier: 'General', position: 40, label: 'Net Amount(Item)' }] }
   ItemAmount;
+
+  @UI:{ lineItem: [{ position: 70, label: 'File Attachment' }],
+      identification: [{ qualifier: 'Attach', position: 10, label: 'Attachment' }] }
+  Attachment;
+
+  @UI:{ identification: [{ qualifier: 'Attach', position: 20, label: 'Mime Type' }] }
+  MimeType;
+
+  @UI:{ identification: [{ qualifier: 'Attach', position: 30, label: 'File Name' }] }
+  FileName;
 
   @UI.hidden: true
   LastChangedBy;

@@ -79,10 +79,14 @@ annotate entity ZC_SALES_ORDER_RAP with
                 targetElement: '_SalesOrderItem',
                 position: 30 }
   ]
-  @UI: { lineItem: [{ position: 10, label: 'Sales Order No' }],
+  @UI: { lineItem: [{ position: 10, label: 'Sales Order No' },
+                    { type: #FOR_ACTION, dataAction: 'copySalesOrder', label: 'Copy Sales Order' },
+                    { type: #FOR_ACTION, dataAction: 'CreateInstance', label: 'Create Instance' }],
+
          identification: [{ position: 10, label: 'Sales Order No', qualifier: 'GenInfo' }],
          selectionField: [{ position: 10 }]
   }
+
   SalesOrder;
 
   @UI:{ lineItem: [{ position: 20, label: 'Document Type' }],
@@ -118,7 +122,6 @@ annotate entity ZC_SALES_ORDER_RAP with
         fieldGroup: [{ qualifier: 'TotalPrice', position: 10 }]
   }
   NetPrice;
-
   @UI:{ textArrangement: #TEXT_ONLY,
         lineItem: [{ position: 80, label: 'Status', criticality: 'OverallStatusCriticality'},
                    { type: #FOR_ACTION, dataAction: 'setProcessed', label: 'Set Processed', invocationGrouping: #CHANGE_SET }],

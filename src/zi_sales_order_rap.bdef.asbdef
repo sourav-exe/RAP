@@ -1,9 +1,12 @@
 managed implementation in class zbp_i_sales_order_rap unique;
+strict ( 1 );
 with draft;
 
 define behavior for ZI_SALES_ORDER_RAP alias SalesOrder
 persistent table zsales_order_rap
 draft table zsales_hd_draft
+with additional save with full data
+early numbering
 lock master
 total etag LastChangedAt
 etag master LastChangedAt
@@ -14,18 +17,40 @@ authorization master ( global, instance )
   delete;
   association _SalesOrderItem { create; with draft; }
 
-  field ( readonly ) CreationDate, CreatedBy, NetPrice, Currency;
+  // administrative fields: read only-Values would be set according to @Semantic annotation
+  field ( readonly ) CreationDate, CreatedBy, LastChangedAt, LastChangedBy;
+
+  // Fields determined via determinations on item level
+  field ( readonly ) NetPrice, currency;
+
+  // dynamic field control-Makes the field read-only if value is already present.
   field ( features : instance ) DocumentCategory;
-  field ( mandatory : create, readonly : update ) SalesOrder;
 
-  action ( features : instance  ) setProcessed result [1] $self;
+  //Semantic Key field, which is readonly for the consumer, value is assigned in early numbering
+  field ( readonly ) SalesOrder;
 
+  // instance action and dynamic action control-Sets status to processed. For already prcessed status, button is made inactive
+  action ( features : instance ) setProcessed result [1] $self;
+
+  // Factory action-> used to create an instance w.r.t a BO instance
+  factory action copySalesOrder [1];
+
+  // Static Factory action-> used to create BO instance with some default values
+  static factory action CreateInstance [1];
+
+  // instance internal action-called from child BO for calculating Net price
   internal action setTotalPrice_action result [1] $self;
 
   validation validateSalesOrder on save { field DocumentType, SalesOrder; create; }
 
-  determination setCreatedDate_By on modify { create; }
+  // Set Default value to Language upon pressing create
+//  determination setLanguage on modify { create; }
 
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
 
   mapping for zsales_order_rap
     {
@@ -54,7 +79,7 @@ authorization dependent by _SalesOrderHeader
   update;
   delete;
 
-  field ( readonly ) SalesOrder;
+  field ( readonly ) SalesOrder, MimeType, FileName;
   field ( mandatory : create, readonly : update ) ItemNo;
 
   association _SalesOrderHeader { with draft; }
@@ -74,6 +99,9 @@ authorization dependent by _SalesOrderHeader
       UnitOfMeasurement   = zieme;
       ItemAmount          = netwr;
       Currency            = waerk;
+      MimeType            = mimetype;
+      FileName            = filename;
+      Attachment          = attachment;
       LastChangedBy       = last_changed_by;
       LastChangedAt       = last_changed_at;
     }

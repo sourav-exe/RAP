@@ -7,6 +7,7 @@ define view entity ZC_SO_ITEM_RAP
 {
       @Search.defaultSearchElement: true
   key SalesOrder,
+      @EndUserText.label: 'Item No'
   key ItemNo,
       //      @Consumption.valueHelpDefinition: [{
       //                       entity:{
@@ -31,6 +32,9 @@ define view entity ZC_SO_ITEM_RAP
       UnitOfMeasurement,
       ItemAmount,
       Currency,
+      Attachment,
+      MimeType,
+      FileName,
       LastChangedBy,
       LastChangedAt,
       /* Associations */

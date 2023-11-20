@@ -31,16 +31,14 @@ define root view entity ZC_SALES_ORDER_RAP
                             },
                     additionalBinding: [{ localElement: 'DocumentTypeText' ,
                                           element: 'SalesDocTypeText',
-                                          usage: #FILTER_AND_RESULT },
-
-                                        { localElement:'language',
-                                          element: 'Language',
-                                          usage: #FILTER_AND_RESULT  }]
+                                          usage: #FILTER_AND_RESULT }]
       }]
       @EndUserText.label: 'Document Type'
       @ObjectModel.text.element: [ 'DocumentTypeText' ]
       DocumentType,
-      DocumentTypeText,
+
+      //  If the keyword localized is used, the text in the system log-on language is drawn.
+      _SalesDocTypeText.SalesDocTypeText as DocumentTypeText : localized,
       NetPrice,
       Currency,
       @ObjectModel.text.element: [ 'StatusText' ]
@@ -50,7 +48,8 @@ define root view entity ZC_SALES_ORDER_RAP
       LastChangedBy,
       @Semantics.systemDateTime.localInstanceLastChangedAt: true
       LastChangedAt,
-      language,
+
+      _SalesDocTypeText,
       _SalesOrderItem : redirected to composition child ZC_SO_ITEM_RAP
 
 

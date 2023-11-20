@@ -3,7 +3,6 @@
 {
 "FROM":
 [
-"ZI_SO_TEXT_VH",
 "ZSALES_ORDER_RAP"
 ],
 "ASSOCIATED":

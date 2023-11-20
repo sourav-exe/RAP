@@ -25,6 +25,16 @@ define view entity ZI_SO_ITEM_RAP
       @Semantics.amount.currencyCode: 'Currency'
       netwr           as ItemAmount,
       waerk           as Currency,
+      
+      @Semantics.largeObject: {
+          mimeType: 'MimeType',
+          fileName: 'FileName',
+      //  acceptableMimeTypes: [ '' ],
+          contentDispositionPreference: #INLINE
+      }
+      attachment      as Attachment,
+      mimetype        as MimeType,
+      filename        as FileName,
       last_changed_by as LastChangedBy,
       last_changed_at as LastChangedAt,
 
