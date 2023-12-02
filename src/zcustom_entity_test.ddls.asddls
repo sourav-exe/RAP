@@ -14,11 +14,13 @@ define root custom entity ZCUSTOM_ENTITY_TEST
       @UI.lineItem: [{ position: 10, label: 'Sales Order No.' }]
       @UI.identification: [{ qualifier: 'GENINFO', position: 10 , type: #STANDARD, label: 'Sales Order' }]
       @UI.selectionField: [{ position: 10 }]
+      @EndUserText.label: 'Sales Order'
   key vbeln : abap.char( 10 );
 
       @UI.lineItem: [{ position: 20, label: 'Created By' }]
       @UI.identification: [{ qualifier: 'GENINFO', position: 20 , type: #STANDARD, label: 'Created By User' }]
       @UI.selectionField: [{ position: 20 }]
+      @EndUserText.label: 'Created By'
       ERNAM : abap.char( 10 );
 
       @UI.lineItem: [{ position: 30, label: 'Order Type' }]
