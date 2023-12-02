@@ -1,0 +1,4 @@
+@EndUserText.label: 'Service Definition for Custom Entity'
+define service ZSD_CUSTOM_ENTITY {
+  expose ZCUSTOM_ENTITY_TEST;
+}
