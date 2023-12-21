@@ -47,12 +47,28 @@ CLASS zcl_custom_entity_impl IMPLEMENTATION.
         SELECT
             vbeln,
             ernam,
-            auart
+            auart,
+            uvall AS OverallStatus
          FROM zsales_order_rap
          WHERE (nv_filter_string)
          ORDER BY (lv_sort_string)
          INTO TABLE @lt_vbak
          OFFSET @nv_offset UP TO @nv_max_rows ROWS.
+
+        LOOP AT lt_vbak ASSIGNING FIELD-SYMBOL(<nfs_vbak>).
+
+          <nfs_vbak>-StatusText = COND #(  WHEN <nfs_vbak>-OverallStatus = 'C' THEN 'Completely Processed'
+                                           WHEN <nfs_vbak>-OverallStatus = 'A' THEN 'Not Yet Processed'
+                                           ELSE 'Status Unknown' ).
+
+          CASE <nfs_vbak>-OverallStatus.
+            WHEN ''.    <nfs_vbak>-StatusCriticality = 2. "Not Relevant             | 2: yellow color
+            WHEN 'C'.   <nfs_vbak>-StatusCriticality = 3. "Completely Processed     | 3: green color
+            WHEN 'A'.   <nfs_vbak>-StatusCriticality = 1. "Not Yet Processed        | 1: red color
+            WHEN OTHERS.<nfs_vbak>-StatusCriticality = 0. "Nothing                  | 0: unknown
+          ENDCASE.
+
+        ENDLOOP.
 
 
         TRY.

@@ -2,7 +2,6 @@ unmanaged implementation in class zbp_custom_entity_test unique;
 //strict ( 2 ); //Uncomment this line in order to enable strict mode 2. The strict mode has two variants (strict(1), strict(2)) and is prerequisite to be future proof regarding syntax and to be able to release your BO.
 
 define behavior for ZCUSTOM_ENTITY_TEST alias SalesOrder
-//late numbering
 lock master
 authorization master ( instance )
 //etag master <field_name>
@@ -12,5 +11,7 @@ authorization master ( instance )
   delete;
 
   field ( mandatory : create, readonly : update ) vbeln;
+
+  action setStatus result [1] $self;
 
 }

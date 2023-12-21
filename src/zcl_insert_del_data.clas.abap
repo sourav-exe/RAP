@@ -21,7 +21,9 @@ CLASS zcl_insert_del_data IMPLEMENTATION.
       WHEN 'INS'.
         DATA(lv_count) = 1.
         DATA(lv_records_to_be_created) = 40.
-        DATA(lv_so_no) = '4039'.
+        DATA(lv_so_no) = '1000'.
+
+        CONDENSE lv_so_no.
 
         WHILE ( lv_count < lv_records_to_be_created ).
           INSERT INTO zsales_order_rap VALUES @( VALUE zsales_order_rap( vbeln = lv_so_no ernam = 'ROYS' auart = 'YNRO' netwr = 1000 waerk = 'INR' ) ).

@@ -87,6 +87,8 @@ CLASS lhc_SalesOrder DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS lock FOR LOCK
       IMPORTING keys FOR LOCK SalesOrder.
+    METHODS setStatus FOR MODIFY
+      IMPORTING keys FOR ACTION SalesOrder~setStatus RESULT result.
 
 ENDCLASS.
 
@@ -234,6 +236,9 @@ CLASS lhc_SalesOrder IMPLEMENTATION.
   METHOD lock.
   ENDMETHOD.
 
+  METHOD setStatus.
+  ENDMETHOD.
+
 ENDCLASS.
 
 CLASS lsc_ZCUSTOM_ENTITY_TEST DEFINITION INHERITING FROM cl_abap_behavior_saver.
@@ -272,7 +277,7 @@ CLASS lsc_ZCUSTOM_ENTITY_TEST IMPLEMENTATION.
 
       ENDLOOP.
 
-      MODIFY zsales_order_rap FROM TABLE @( CORRESPONDING #( mod_tab ) ).
+      MODIFY zsales_order_rap FROM TABLE @( CORRESPONDING #( mod_tab MAPPING uvall = OverallStatus ) ).
       WAIT UP TO 10 SECONDS.
     ENDIF.
 
